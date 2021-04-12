@@ -1,58 +1,31 @@
 # Mouseover Guru Plugin
 
-- [Features](#features)
-- [Installation](#installation)
-- [User Manual](#manual)
-- [Contributing](#contributing-guide)
-
 ## Features
 
-- Quickly preview Piotr Wozniak's articles by hovering over links in SuperMemo.
+- Quickly preview wikipedia articles by hovering over links in SuperMemo.
 
 ## Installation
 
 > Note: This plugin depends on the [Mouseover Popup plugin](https://github.com/bjsi/SuperMemoAssistant.Plugins.MouseoverPopup). Make sure you install it alongside Mouseover Guru.
 
-### Manual Installation
-
-#### Pre-built binaries (**RECOMMENDED**)
-
-(WIP. Currently Not Available)
-
-> Note: If you are upgrading from an older version, please delete the old version first.
-
-1. Check the releases tab on this GitHub repository.
+1. Go to the [latest release page](https://github.com/bjsi/SuperMemoAssistant.Plugins.MouseoverGuru/releases/latest) on this GitHub repository.
 2. Download the latest available version.
-3. Navigate to the development plugin folder (`C:\Users\<YOUR USERNAME>\SuperMemoAssistant\Plugins\Development`) and extract the zip folder into the directory.
+3. Navigate to the development plugin folder (`C:\Users\<YOUR USER NAME>\Documents\SuperMemoAssistant\Plugins\Development`) and extract the zip folder into the directory.
 
-#### Building from source
+Note: If you are upgrading from an older version, you should delete the older version first.
 
-> See the [building from source guide](https://github.com/bjsi/docs/blob/master/SMA/plugins/BUILD_FROM_SOURCE.md) and feel free to get in touch with me (Jamesb) on the SMA discord if you have trouble.
+## Usage
 
-## Manual
+Simply hover over SuperMemo Guru article links in SuperMemo to open the preview window. The popup window has buttons at the bottom of the window to extract the preview into your collection or open the full article in your browser.
 
-### Usage
+### Settings
 
-Hover over links to articles to open a preview window within SuperMemo.
+> You can access the settings of any SuperMemoAssistant plugin by pressing Ctrl+Alt+Shift+O and clicking the gear icon.
 
-### Configuration
+You can set the default priority of the imported extracts. You can also require that the ctrl key is pressed while hovering to open the window.
 
-#### Settings
+## Support
 
-> Note: You can press `Ctrl+Shift+Alt+O` to access the settings of any SMA Plugin.
+I want to put all of my energy into these projects and work on them full time! I also want to keep as much of my content open source and freely available as possible. That those seeking knowledge may find it!
 
-## Contributing Guide
-
-### Issues and Suggestions
-
-See the [contribution guide](https://github.com/bjsi/docs/blob/master/SMA/plugins/CONTRIBUTING.md) for information on how to report issues or make suggestions.
-
-### Code Contributions
-
-Pull requests are welcome!
-
-1. Firstly, go through the manual installation guide above.
-2. You will also require [Git Hooks for VS](https://marketplace.visualstudio.com/items?itemName=AlexisIncogito.VisualStudio-Git-Hooks) which is used to enforce a consistent code style.
-> Note: you do not need to build the entire SuperMemoAssistant project to make changes to or debug a plugin.
-3. See the code section of the [contribution guide](https://github.com/bjsi/docs/blob/master/SMA/plugins/CONTRIBUTING.md) for pull request instructions.
-4. If you need help, don't hesitate to get in touch with me (Jamesb) on the SMA discord channel.
+If you would like to support my work, I have a [Patreon page](https://www.patreon.com/experimental_learning) with rewards for each tier or you can [buy me a coffee](https://www.buymeacoffee.com/experilearning).
