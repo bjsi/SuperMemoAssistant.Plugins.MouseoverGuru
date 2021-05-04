@@ -2,12 +2,7 @@
 using Newtonsoft.Json;
 using SuperMemoAssistant.Services.UI.Configuration;
 using SuperMemoAssistant.Sys.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SuperMemoAssistant.Plugins.MouseoverGuru
 {
@@ -29,26 +24,9 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
     [Heading("By Jamesb | Experimental Learning")]
 
     [Heading("Features:")]
-    [Text(@"- Open previews of Piotr Wozniak's articles in popup windows")]
+    [Text(@"- Open previews of Piotr Wozniak's SuperMemo Guru articles in popup windows.")]
 
     [Heading("General Settings")]
-
-    [Field(Name = "Scan SM-related articles for glossary terms?")]
-    public bool ScanElements { get; set; } = true;
-
-    [Field(Name = "Element Reference Regexes")]
-    [MultiLine]
-    public string ReferenceRegexes { get; set; } = @".*supermemo.*
-.*super-memory.*
-.*super-memo.*
-.*supermemopedia.*
-.*supermemory.*
-.*incremental reading.*
-.*incremental learning.*";
-
-    [Field(Name = "Concept Regexes")]
-    [MultiLine]
-    public string ConceptRegexes { get; set; } = @"";
 
     [JsonIgnore]
     public bool IsChanged { get; set; }

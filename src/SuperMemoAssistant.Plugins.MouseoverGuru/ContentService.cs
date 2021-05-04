@@ -1,22 +1,21 @@
 ﻿using Anotar.Serilog;
 using HtmlAgilityPack;
-using MouseoverPopup.Interop;
+using MouseoverPopupInterfaces;
 using PluginManager.Interop.Sys;
 using SuperMemoAssistant.Interop.SuperMemo.Elements.Builders;
 using SuperMemoAssistant.Sys.Remoting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SuperMemoAssistant.Plugins.MouseoverGuru
 {
-  public class ContentService : PerpetualMarshalByRefObject, IContentProvider
+  public class ContentService : PerpetualMarshalByRefObject, IMouseoverContentProvider
+
   {
 
     private readonly HttpClient _httpClient;
@@ -57,10 +56,8 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
 
     private async Task<PopupContent> GetArticleExtract(RemoteCancellationToken ct, string url)
     {
-
-      string response = await GetAsync(ct.Token(), url);
+      string response = await GetAsync(ct.Token(), url).ConfigureAwait(false);
       return CreatePopupContent(response, url);
-
     }
 
     private PopupContent CreatePopupContent(string content, string url)
@@ -72,21 +69,45 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
       var doc = new HtmlDocument();
       doc.LoadHtml(content);
 
-      // Get Text between the first and second mw-headline
-
-      var firstSection = doc.DocumentNode.SelectSingleNode("//span[@class='mw-headline']");
-      if (firstSection.IsNull())
+      var firstHeading = doc.DocumentNode.SelectSingleNode("//h1[@id='firstHeading']");
+      if (firstHeading.IsNull())
         return null;
 
-      string extract = firstSection.OuterHtml;
-      var cur = firstSection;
+      var body = doc.DocumentNode.SelectSingleNode("//div[@id='mw-content-text']");
+      if (body.IsNull())
+        return null;
 
-      while (!cur.GetClasses().Any(x => x == "mw-headline") 
-        && !cur.ChildNodes.Any(c => c.GetClasses().Any(x => x == "mw-headline")))
+      string extract = firstHeading.OuterHtml;
+      var cur = body.FirstChild;
+      int mwHeadlineCt = 0;
+
+      while (cur != null)
       {
+        var classes = cur.GetClasses();
+        if (classes.Any(x => x == "mw-headline")
+            || cur.ChildNodes.Any(c => c.GetClasses().Any(x => x == "mw-headline")))
+        {
+          cur = cur.NextSibling;
+          mwHeadlineCt++;
+        }
+
+        if (classes.Any(x => x == "printfooter"))
+          break;
+
+        if (mwHeadlineCt == 2)
+          break;
+
         extract += cur.OuterHtml;
         cur = cur.NextSibling;
       }
+
+      var extractDoc = new HtmlDocument();
+      extractDoc.LoadHtml(extract);
+      var toc = extractDoc.DocumentNode.SelectSingleNode("//div[@id='toc']");
+      if (toc != null)
+        toc.Remove();
+
+      extract = extractDoc.DocumentNode.OuterHtml;
 
       var titleNode = doc.GetElementbyId("firstHeading");
       string title = titleNode?.InnerText;
@@ -106,11 +127,10 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
       var refs = new References();
       refs.Author = "Piotr Wozniak";
       refs.Link = url;
-
-      // TODO: Source
-      // refs.Source = "SuperMemo Glossary";
+      refs.Source = "SuperMemo Guru";
       refs.Title = title;
-      return new PopupContent(refs, html);
+
+      return new PopupContent(refs, html, true, url);
 
     }
 
@@ -120,11 +140,11 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
 
       try
       {
-        responseMsg = await _httpClient.GetAsync(url, ct);
+        responseMsg = await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
 
         if (responseMsg.IsSuccessStatusCode)
         {
-          return await responseMsg.Content.ReadAsStringAsync();
+          return await responseMsg.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
         else
         {

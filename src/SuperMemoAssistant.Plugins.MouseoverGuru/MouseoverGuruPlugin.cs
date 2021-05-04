@@ -1,4 +1,12 @@
-﻿#region License & Metadata
+﻿using Anotar.Serilog;
+using MouseoverPopupInterfaces;
+using SuperMemoAssistant.Services;
+using SuperMemoAssistant.Services.IO.HotKeys;
+using SuperMemoAssistant.Services.Sentry;
+using SuperMemoAssistant.Services.UI.Configuration;
+using System.Diagnostics.CodeAnalysis;
+
+#region License & Metadata
 
 // The MIT License (MIT)
 // 
@@ -21,7 +29,7 @@
 // DEALINGS IN THE SOFTWARE.
 // 
 // 
-// Created On:   7/16/2020 2:07:59 AM
+// Created On:   5/4/2021 10:51:56 AM
 // Modified By:  james
 
 #endregion
@@ -31,18 +39,6 @@
 
 namespace SuperMemoAssistant.Plugins.MouseoverGuru
 {
-  using System.Collections.Generic;
-  using System.Diagnostics.CodeAnalysis;
-  using System.Runtime.Remoting;
-  using Anotar.Serilog;
-  using MouseoverPopup.Interop;
-  using SuperMemoAssistant.Interop.SuperMemo.Core;
-  using SuperMemoAssistant.Services;
-  using SuperMemoAssistant.Services.IO.HotKeys;
-  using SuperMemoAssistant.Services.Sentry;
-  using SuperMemoAssistant.Services.UI.Configuration;
-  using SuperMemoAssistant.Sys.Remoting;
-
   // ReSharper disable once UnusedMember.Global
   // ReSharper disable once ClassNeverInstantiated.Global
   [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
@@ -56,6 +52,8 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
     #endregion
 
 
+
+
     #region Properties Impl - Public
 
     /// <inheritdoc />
@@ -63,38 +61,37 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
 
     /// <inheritdoc />
     public override bool HasSettings => true;
-    public MouseoverGuruCfg Config;
-    private const string ProviderName = "SuperMemo Articles";
-    private IContentProvider _contentProvider { get; set; }
+    public MouseoverGuruCfg Config { get; private set; }
+    private const string ProviderName = "SuperMemo Guru Articles";
+    private IMouseoverContentProvider _contentProvider { get; set; } = new ContentService();
+
 
     #endregion
+
+
 
 
     #region Methods Impl
 
     /// <inheritdoc />
-    protected override void PluginInit()
+    protected override void OnSMStarted(bool wasSMAlreadyStarted)
     {
-
       LoadConfig();
 
-      _contentProvider = new ContentService();
-
-      if (!this.RegisterProvider(ProviderName, new List<string> { UrlUtils.GuruRegex, UrlUtils.HelpRegex, UrlUtils.MemopediaRegex }, _contentProvider))
+      if (!this.RegisterProvider(ProviderName, new string[] { UrlUtils.GuruRegex, UrlUtils.HelpRegex, UrlUtils.MemopediaRegex }, _contentProvider))
       {
         LogTo.Error($"Failed to Register provider {ProviderName} with MouseoverPopup Service");
         return;
       }
+
       LogTo.Debug($"Successfully registered provider {ProviderName} with MouseoverPopup Service");
 
-
-      // Svc.SM.UI.ElementWdw.OnElementChanged += new ActionProxy<SMDisplayedElementChangedEventArgs>(OnElementChanged);
+      base.OnSMStarted(wasSMAlreadyStarted);
     }
 
-    /// <inheritdoc />
     public override void ShowSettings()
     {
-      ConfigurationWindow.ShowAndActivate(HotKeyManager.Instance, Config);
+      ConfigurationWindow.ShowAndActivate("MouseoverGuru", HotKeyManager.Instance, Config);
     }
 
     public void LoadConfig()
@@ -105,16 +102,20 @@ namespace SuperMemoAssistant.Plugins.MouseoverGuru
     #endregion
 
 
+
+
     #region Methods
 
-    [LogToErrorOnException]
-    public void OnElementChanged(SMDisplayedElementChangedEventArgs e)
-    {
-      try
-      {
-      }
-      catch (RemotingException) { }
-    }
+    // Uncomment to register an event handler for element changed events
+    // [LogToErrorOnException]
+    // public void OnElementChanged(SMDisplayedElementChangedEventArgs e)
+    // {
+    //   try
+    //   {
+    //     Insert your logic here
+    //   }
+    //   catch (RemotingException) { }
+    // }
 
     #endregion
   }
