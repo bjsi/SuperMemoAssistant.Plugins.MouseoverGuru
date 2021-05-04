@@ -2,7 +2,7 @@
 
 ## Features
 
-- Quickly preview wikipedia articles by hovering over links in SuperMemo.
+- Quickly preview SuperMemo Guru articles by hovering over links in SuperMemo.
 
 ## Installation
 
